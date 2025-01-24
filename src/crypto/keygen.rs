@@ -1,10 +1,15 @@
 // This file handles the generation of the secret key and public key
+use curve25519_dalek::scalar::Scalar;
+use curve25519_dalek::ristretto::RistrettoPoint;
+use rand_core::OsRng;
 
-// use curve25519-dalek::
-pub(crate) fn secret_keygen() -> Result<u64, String> {
-    Ok(1)
+pub fn secret_keygen() -> Result<Scalar, String> { 
+    let mut csprng = OsRng;
+    let secret_key = Scalar::random(&mut csprng);
+    Ok(secret_key)
 }
 
-// pub(crate) fn public_keygen() -> Result<String, String> {
-    
-// }
+pub fn public_keygen(sk: Scalar) -> Result<RistrettoPoint, String> {
+    let public_key = sk * RistrettoPoint::default();
+    Ok(public_key)
+}
