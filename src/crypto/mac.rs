@@ -3,6 +3,8 @@ use curve25519_dalek::ristretto::RistrettoPoint;
 use rand_core::OsRng;
 
 pub fn mac(sk : Scalar, message : Vec<Scalar>, group_params : Vec<RistrettoPoint>) -> Result<(RistrettoPoint, Scalar), String> {
+    assert!(message.len() == group_params.len() - 1);
+    
     let mut csprng = OsRng;
     let e = Scalar::random(&mut csprng);
     
@@ -31,6 +33,10 @@ pub fn mac_verify(e : Scalar, a : RistrettoPoint, sk : Scalar, group_params: Vec
         rhs = rhs + message[i - 1] * group_params[i];
         i = i + 1;
     }
-    let res = lhs == rhs;
+    let res = lhs.eq(&rhs);
+    println!("x");
+    println!("{:?}", lhs);
+    println!("y");
+    println!("{:?}", rhs);
     Ok(res)
 }
