@@ -18,5 +18,19 @@ pub fn mac(sk : Scalar, message : Vec<Scalar>, group_params : Vec<RistrettoPoint
     }
 
     a = a * scalar_coeff;
-    return Ok((a, e))
+    Ok((a, e))
+}
+
+pub fn mac_verify(e : Scalar, a : RistrettoPoint, sk : Scalar, group_params: Vec<RistrettoPoint>, message: Vec<Scalar>) -> Result<bool, String> {
+    let lhs = (sk + e) * a;
+    let mut i = 1;
+    let mut rhs = group_params[0];
+    let n = group_params.len();
+
+    while i < n {
+        rhs = rhs + message[i - 1] * group_params[i];
+        i = i + 1;
+    }
+    let res = lhs == rhs;
+    Ok(res)
 }
