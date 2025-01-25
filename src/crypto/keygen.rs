@@ -10,6 +10,6 @@ pub fn secret_keygen() -> Result<Scalar, String> {
 }
 
 pub fn public_keygen(sk: Scalar) -> Result<RistrettoPoint, String> {
-    let public_key = sk * RistrettoPoint::default();
-    Ok(public_key)
+    let public_parameter = sk * RistrettoPoint::default();
+    Ok(public_parameter)
 }
