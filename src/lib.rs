@@ -9,8 +9,8 @@ pub use crypto::mac_verify;
 
 pub use crypto::groupgen;
 
-pub use crypto::credential_issuance;
-pub use crypto::credential_presentation;
+pub use crypto::user_to_server_zkp;
+pub use crypto::server_zkp_verify;
 
 pub use okamoto::prove_linear;
 pub use okamoto::verify_linear;

@@ -7,8 +7,6 @@ use rand_core::OsRng;
 const GROUP_SIZE : u64 = 8;
 
 fn random_message_gen() -> Result<Vec<Scalar>, String> {
-
-
     let mut test_message = Vec::new();
     let mut i = 0;
     let mut csprng = OsRng;
