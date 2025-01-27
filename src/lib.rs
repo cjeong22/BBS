@@ -11,6 +11,8 @@ pub use crypto::groupgen;
 
 pub use crypto::user_to_server_zkp;
 pub use crypto::server_zkp_verify;
+pub use crypto::server_to_user_zkp;
+pub use crypto::user_zkp_verify;
 
 pub use okamoto::prove_linear;
 pub use okamoto::verify_linear;

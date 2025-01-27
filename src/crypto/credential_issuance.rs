@@ -1,8 +1,6 @@
 use curve25519_dalek::Scalar;
 use curve25519_dalek::ristretto::RistrettoPoint;
-use okamoto::{prove_linear, verify_linear};
-
-use rand_core::OsRng;
+use okamoto::{prove_linear, verify_linear, prove_dleq, verify_dleq};
 
 
 // message = attributes in this case
@@ -38,59 +36,26 @@ pub fn user_to_server_zkp(group_params : Vec<RistrettoPoint>, message: Vec<Scala
     let proof = prove_linear(&group_params, &witness, &[cp]).unwrap();
 
     Ok(proof)
-
-    
-    // let mut cp = group_params[0];
-
-    // let mut i = 0;
-
-    // while i < message.len() {
-    //     cp = cp + message[i] * group_params[i + 1];
-    //     i = i + 1;
-    // }
-
-    // cp = cp * s.invert();
-
-    // let mut matrix:Vec<RistrettoPoint> = Vec::new();
-    // let mut witness:Vec<Scalar> = Vec::new();
-    // let mut statement:Vec<RistrettoPoint> = Vec::new();
-
-    // let mut i = 0;
-
-    // while i < group_params.len() - 1 {
-    //     matrix.push(group_params[i + 1]);
-    //     i = i + 1;
-    // }
-
-    // let g0 = group_params[0];
-
-    // // witness.push(s);
-    // let mut i = 0;
-
-    // while i < message.len() {
-    //     witness.push(-message[i]);
-    //     i = i + 1;
-    // }
-
-    // statement.push(g0 - s * cp);
-
-    // let proof = prove_linear(&matrix, &witness, &statement).unwrap();
-
-    // Ok(proof)
 }
 
 // This function sends a ZKP from the server to the user
-pub fn server_to_user_zkp() {
-    
+pub fn server_to_user_zkp(cp : RistrettoPoint, sk : Scalar, witness : Scalar) -> Result<Vec<Scalar>, String>{
+    let proof = prove_dleq(&[cp], &(sk + witness).invert(), &[(sk + witness).invert()* cp]).unwrap();
+    Ok(proof)
 }
 
 // This function is used by the server to verify the ZKP sent from the user
 pub fn server_zkp_verify(group_params : Vec<RistrettoPoint>, statement:Vec<RistrettoPoint>, proof: Vec<Scalar>) -> bool {
-    verify_linear(&group_params, &statement, &proof).unwrap();
-    true
+    match verify_linear(&group_params, &statement, &proof) {
+        Ok(_) => true,
+        Err(_) => false,
+    }
 }   
 
 // This function is used by the user to verify the ZKP sent from the server
-pub fn user_zkp_verify() {
-
+pub fn user_zkp_verify(cp: RistrettoPoint, ap: Vec<RistrettoPoint>, proof: Vec<Scalar>) -> bool {
+    match verify_dleq(&[cp], &ap, &proof) {
+        Ok(_) => true,
+        Err(_) => false,
+    }   
 }
