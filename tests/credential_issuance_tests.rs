@@ -1,6 +1,6 @@
 extern crate u_bbs;
 
-use u_bbs::{groupgen, secret_keygen, server_to_user_zkp, server_zkp_verify, user_to_server_zkp, user_zkp_verify};
+use u_bbs::{groupgen, secret_keygen, server_to_user_zkp_iss, server_zkp_verify_iss, user_to_server_zkp_iss, user_zkp_verify_iss};
 use curve25519_dalek::scalar::Scalar;
 use rand_core::OsRng;
 
@@ -44,13 +44,13 @@ fn zkp_verifies() {
 
     let ap = (test_sk + e).invert() * cp;
 
-    let proof = user_to_server_zkp(test_group.clone(), test_message, s).unwrap();
-    assert!(server_zkp_verify(test_group.clone(),[cp].to_vec(), proof) == true);
-    let invalid_proof = user_to_server_zkp(test_group.clone(), random_message_gen().unwrap(), s).unwrap();
-    assert!(server_zkp_verify(test_group.clone(), [cp].to_vec(), invalid_proof) == false);
+    let proof = user_to_server_zkp_iss(test_group.clone(), test_message, s).unwrap();
+    assert!(server_zkp_verify_iss(test_group.clone(),[cp].to_vec(), proof) == true);
+    let invalid_proof = user_to_server_zkp_iss(test_group.clone(), random_message_gen().unwrap(), s).unwrap();
+    assert!(server_zkp_verify_iss(test_group.clone(), [cp].to_vec(), invalid_proof) == false);
 
-    let proof = server_to_user_zkp(cp, test_sk, e).unwrap();
-    assert!(user_zkp_verify(cp, [ap].to_vec(), proof) == true);
-    let invalid_proof = server_to_user_zkp(cp, test_sk,other_e).unwrap();
-    assert!(user_zkp_verify(cp, [ap].to_vec(), invalid_proof) == false);
+    let proof = server_to_user_zkp_iss(cp, test_sk, e).unwrap();
+    assert!(user_zkp_verify_iss(cp, [ap].to_vec(), proof) == true);
+    let invalid_proof = server_to_user_zkp_iss(cp, test_sk,other_e).unwrap();
+    assert!(user_zkp_verify_iss(cp, [ap].to_vec(), invalid_proof) == false);
 }

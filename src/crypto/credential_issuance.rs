@@ -9,7 +9,7 @@ use okamoto::{prove_linear, verify_linear, prove_dleq, verify_dleq};
 // witness = (m, s)
 // FOR NOW: ignoring phi
 // WTS : c' - sinv G_0 = sum
-pub fn user_to_server_zkp(group_params : Vec<RistrettoPoint>, message: Vec<Scalar>, s : Scalar) -> Result<Vec<Scalar>, String> {
+pub fn user_to_server_zkp_iss(group_params : Vec<RistrettoPoint>, message: Vec<Scalar>, s : Scalar) -> Result<Vec<Scalar>, String> {
     assert!(group_params.len() == message.len() + 1);
 
     let mut cp = group_params[0];
@@ -39,13 +39,13 @@ pub fn user_to_server_zkp(group_params : Vec<RistrettoPoint>, message: Vec<Scala
 }
 
 // This function sends a ZKP from the server to the user
-pub fn server_to_user_zkp(cp : RistrettoPoint, sk : Scalar, witness : Scalar) -> Result<Vec<Scalar>, String>{
+pub fn server_to_user_zkp_iss(cp : RistrettoPoint, sk : Scalar, witness : Scalar) -> Result<Vec<Scalar>, String>{
     let proof = prove_dleq(&[cp], &(sk + witness).invert(), &[(sk + witness).invert()* cp]).unwrap();
     Ok(proof)
 }
 
 // This function is used by the server to verify the ZKP sent from the user
-pub fn server_zkp_verify(group_params : Vec<RistrettoPoint>, statement:Vec<RistrettoPoint>, proof: Vec<Scalar>) -> bool {
+pub fn server_zkp_verify_iss(group_params : Vec<RistrettoPoint>, statement:Vec<RistrettoPoint>, proof: Vec<Scalar>) -> bool {
     match verify_linear(&group_params, &statement, &proof) {
         Ok(_) => true,
         Err(_) => false,
@@ -53,7 +53,7 @@ pub fn server_zkp_verify(group_params : Vec<RistrettoPoint>, statement:Vec<Ristr
 }   
 
 // This function is used by the user to verify the ZKP sent from the server
-pub fn user_zkp_verify(cp: RistrettoPoint, ap: Vec<RistrettoPoint>, proof: Vec<Scalar>) -> bool {
+pub fn user_zkp_verify_iss(cp: RistrettoPoint, ap: Vec<RistrettoPoint>, proof: Vec<Scalar>) -> bool {
     match verify_dleq(&[cp], &ap, &proof) {
         Ok(_) => true,
         Err(_) => false,
